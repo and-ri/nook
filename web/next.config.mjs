@@ -8,7 +8,7 @@ export default withNextIntl({
         return [
             {
                 source: '/api/:path*',
-                destination: `${process.env.API_BASE_URL}/:path*`,
+                destination: `${process.env.API_BASE_URL || 'http://localhost:3000'}/:path*`,
             },
         ];
     },
