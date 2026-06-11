@@ -30,6 +30,8 @@ services:
     image: ghcr.io/and-ri/nook-web:latest
     ports:
       - "3001:3001"
+    environment:
+      API_BASE_URL: http://server:3000
     depends_on:
       - server
 

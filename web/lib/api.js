@@ -9,7 +9,7 @@ function getToken() {
 }
 
 export async function fetchApi(path, options = {}) {
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}${path}`;
+    const url = `/api${path}`;
     const token = getToken();
 
     const response = await fetch(url, {
