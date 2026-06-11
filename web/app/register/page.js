@@ -47,7 +47,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <div className="w-full max-w-md p-8 border rounded-lg">
                 <form onSubmit={handleSubmit}>
                     <FieldGroup>

@@ -29,10 +29,18 @@
     "haveAccount": "Вже маєте акаунт? Увійти"
   },
   "Header": {
-    "brand": "Менеджер підписок"
+    "brand": "Nook"
   },
   "Footer": {
-    "tagline": "Керуйте своїми підписками"
+    "github": "GitHub"
+  },
+  "Nav": {
+    "dashboard": "Підписки",
+    "reports": "Звіти",
+    "categories": "Категорії",
+    "paymentMethods": "Способи оплати",
+    "settings": "Налаштування",
+    "logout": "Вийти"
   },
   "Dashboard": {
     "title": "Підписки",
@@ -40,8 +48,13 @@
     "subscriptionCount": "{count, plural, one {# підписка} few {# підписки} many {# підписок} other {# підписок}}",
     "noSubscriptions": "Підписок ще немає",
     "noSubscriptionsDesc": "Додайте першу підписку щоб почати.",
-    "viewDetails": "Детальніше",
-    "failedToLoad": "Не вдалося завантажити підписки"
+    "viewDetails": "Деталі",
+    "visitSite": "Сайт",
+    "failedToLoad": "Не вдалося завантажити підписки",
+    "allCategories": "Всі категорії",
+    "allMethods": "Всі методи",
+    "clearFilters": "Скинути",
+    "noResults": "Немає підписок за вибраними фільтрами."
   },
   "Stats": {
     "monthlySpend": "Витрати на місяць",
@@ -57,6 +70,8 @@
     "namePlaceholder": "напр. Netflix",
     "url": "Сайт",
     "urlPlaceholder": "https://example.com",
+    "logoUrl": "URL логотипу (необов'язково)",
+    "logoUrlPlaceholder": "Визначається автоматично з сайту",
     "amount": "Сума",
     "amountPlaceholder": "0.00",
     "currency": "Валюта",
@@ -71,6 +86,10 @@
     "nextBillingDate": "Дата наступного платежу",
     "cancelledAt": "Скасовано",
     "website": "Сайт",
+    "categories": "Категорії",
+    "noCategoriesYet": "Категорій ще немає.",
+    "paymentMethod": "Спосіб оплати",
+    "noPaymentMethod": "Не вказано",
     "backToList": "До списку підписок",
     "backToDetails": "До підписки",
     "creating": "Створення…",
@@ -122,10 +141,84 @@
     "savePreferences": "Зберегти параметри",
     "savingPreferences": "Збереження…",
     "preferencesSaved": "Параметри збережено.",
+    "appearance": "Зовнішній вигляд",
+    "appearanceDescription": "Оберіть бажану колірну тему.",
+    "themeLight": "Світла",
+    "themeDark": "Темна",
+    "themeSystem": "Системна",
     "backToDashboard": "На дашборд"
   },
   "Language": {
     "en": "English",
     "uk": "Українська"
+  },
+  "Reports": {
+    "title": "Звіти",
+    "totalMonthly": "Витрати на місяць",
+    "totalActive": "Активних підписок",
+    "upcoming": "Майбутні поновлення",
+    "total": "Всього підписок",
+    "byStatus": "За статусом",
+    "byCategory": "За категорією",
+    "byCycle": "За циклом оплати",
+    "noData": "Немає даних для відображення",
+    "noUpcoming": "Немає поновлень в найближчі 30 днів",
+    "allSubscriptions": "Всі підписки",
+    "colName": "Назва",
+    "colAmount": "Сума",
+    "colCycle": "Цикл",
+    "colStatus": "Статус",
+    "colNextDate": "Наступний платіж",
+    "colCategory": "Категорії"
+  },
+  "Category": {
+    "title": "Категорії",
+    "description": "Категорії допомагають групувати та фільтрувати підписки.",
+    "add": "Додати категорію",
+    "name": "Назва",
+    "namePlaceholder": "напр. Стрімінг",
+    "saving": "Збереження…",
+    "saveButton": "Зберегти",
+    "deleteTitle": "Видалити категорію?",
+    "deleteDesc": "Категорію \"{name}\" буде видалено з усіх підписок.",
+    "noCategories": "Категорій ще немає",
+    "noCategoriesDesc": "Створіть категорію щоб почати групувати підписки."
+  },
+  "Landing": {
+    "heroHeadline": "Ваші підписки — під контролем",
+    "heroSubtitle": "Ведіть облік усіх підписок в одному місці. Знайте точно, скільки витрачаєте і коли настає наступний платіж.",
+    "ctaPrimary": "Почати безкоштовно",
+    "ctaSecondary": "Увійти",
+    "feature1Title": "Все в одному місці",
+    "feature1Desc": "Додавайте будь-які підписки — стрімінг, SaaS, членства. Більше жодних забутих платежів.",
+    "feature2Title": "Огляд витрат",
+    "feature2Desc": "Бачте щомісячні витрати з першого погляду. Групуйте за категоріями та вирішуйте, що варто залишити.",
+    "feature3Title": "Нагадування про поновлення",
+    "feature3Desc": "Знайте, що поновлюється в найближчі 30 днів. Жодних неочікуваних списань."
+  },
+  "PaymentMethod": {
+    "title": "Способи оплати",
+    "description": "Керуйте способами оплати для ваших підписок.",
+    "add": "Додати спосіб",
+    "addTitle": "Додати спосіб оплати",
+    "editTitle": "Редагувати спосіб оплати",
+    "name": "Назва",
+    "namePlaceholder": "напр. Visa *4242",
+    "type": "Тип",
+    "logoUrl": "URL логотипу (необов'язково)",
+    "logoUrlPlaceholder": "https://...",
+    "saving": "Збереження…",
+    "saveButton": "Зберегти",
+    "deleteTitle": "Видалити спосіб оплати?",
+    "deleteDesc": "Видалення \"{name}\" не вплине на підписки.",
+    "noMethods": "Способів оплати ще немає",
+    "noMethodsDesc": "Додайте картку, банк або гаманець.",
+    "types": {
+      "card": "Картка",
+      "bank": "Банківський переказ",
+      "wallet": "Цифровий гаманець",
+      "crypto": "Крипто",
+      "other": "Інше"
+    }
   }
 }

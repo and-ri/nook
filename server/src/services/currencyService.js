@@ -1,4 +1,5 @@
-const FRANKFURTER_URL = 'https://api.frankfurter.app/latest?base=USD';
+// open.er-api.com: free, no API key, 160+ currencies including UAH
+const RATES_URL = 'https://open.er-api.com/v6/latest/USD';
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let cache = { rates: null, fetchedAt: 0 };
@@ -9,12 +10,12 @@ async function getRates() {
         return cache.rates;
     }
 
-    const res = await fetch(FRANKFURTER_URL);
+    const res = await fetch(RATES_URL);
     if (!res.ok) throw new Error('Failed to fetch exchange rates');
     const data = await res.json();
 
-    // data.rates is relative to USD base, add USD itself
-    cache = { rates: { USD: 1, ...data.rates }, fetchedAt: now };
+    // data.rates already includes USD: 1
+    cache = { rates: data.rates, fetchedAt: now };
     return cache.rates;
 }
 

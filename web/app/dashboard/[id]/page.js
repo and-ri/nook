@@ -4,7 +4,6 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
-import { Header } from "@/components/layout/Header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
     AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -12,19 +11,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSubscription, deleteSubscription } from "@/lib/api";
+import { SubscriptionIcon } from "@/components/ui/SubscriptionIcon";
+import { StatusIcon } from "@/components/ui/StatusIcon";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
-const STATUS_VARIANTS = { ACTIVE: 'default', TRIAL: 'secondary', PAUSED: 'outline', CANCELLED: 'destructive' };
-
-function formatDate(dateStr, locale) {
+function formatDate(dateStr) {
     if (!dateStr) return '—';
-    return new Date(dateStr).toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-    });
+    return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function DetailRow({ label, value }) {
@@ -71,122 +68,141 @@ export default function SubscriptionDetailsPage({ params }) {
     const sub = subscription;
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1">
-                <div className="container mx-auto py-8 max-w-2xl flex flex-col gap-6">
-                    <Button variant="ghost" size="sm" asChild className="w-fit -ml-2">
-                        <Link href="/dashboard">
-                            <ArrowLeft data-icon="inline-start" />
-                            {t('backToList')}
-                        </Link>
-                    </Button>
+        <div className="container mx-auto py-8 max-w-2xl flex flex-col gap-6">
+            <Button variant="ghost" size="sm" asChild className="w-fit -ml-2">
+                <Link href="/dashboard">
+                    <ArrowLeft data-icon="inline-start" />
+                    {t('backToList')}
+                </Link>
+            </Button>
 
-                    {error && (
-                        <Alert variant="destructive">
-                            <AlertCircle />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
+            {error && (
+                <Alert variant="destructive">
+                    <AlertCircle />
+                    <AlertTitle>{tCommon('error')}</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
 
-                    {loading ? (
-                        <Card>
-                            <CardHeader>
-                                <Skeleton className="h-6 w-1/2" />
-                                <Skeleton className="h-4 w-1/3" />
-                            </CardHeader>
-                            <CardContent className="flex flex-col gap-4">
-                                {Array.from({ length: 4 }).map((_, i) => (
-                                    <Skeleton key={i} className="h-5 w-full" />
-                                ))}
-                            </CardContent>
-                        </Card>
-                    ) : sub ? (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-xl">{sub.name}</CardTitle>
-                                {sub.notes && <CardDescription>{sub.notes}</CardDescription>}
-                                <CardAction>
-                                    <Badge variant={STATUS_VARIANTS[sub.status] || 'outline'}>
-                                        {tStatus(sub.status)}
-                                    </Badge>
-                                </CardAction>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex flex-col">
-                                    <DetailRow
-                                        label={t('amount')}
-                                        value={new Intl.NumberFormat('en', {
-                                            style: 'currency',
-                                            currency: sub.currency,
-                                            minimumFractionDigits: 2,
-                                        }).format(sub.amount)}
-                                    />
+            {loading ? (
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-1/2" />
+                        <Skeleton className="h-4 w-1/3" />
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="h-5 w-full" />
+                        ))}
+                    </CardContent>
+                </Card>
+            ) : sub ? (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-3 text-xl">
+                            <SubscriptionIcon subscription={sub} size={36} />
+                            {sub.name}
+                        </CardTitle>
+                        <div className="flex items-center gap-2 pt-1">
+                            <StatusIcon status={sub.status} />
+                            <span className="text-sm text-muted-foreground">{tStatus(sub.status)}</span>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-col">
+                            <DetailRow
+                                label={t('amount')}
+                                value={new Intl.NumberFormat('en', {
+                                    style: 'currency', currency: sub.currency, minimumFractionDigits: 2,
+                                }).format(sub.amount)}
+                            />
+                            <Separator />
+                            <DetailRow label={t('billingCycle')} value={tCycle(sub.billingCycle)} />
+                            <Separator />
+                            <DetailRow label={t('nextBillingDate')} value={formatDate(sub.nextBillingDate)} />
+                            <Separator />
+                            <DetailRow label={t('startDate')} value={formatDate(sub.startDate)} />
+                            {sub.cancelledAt && (
+                                <>
                                     <Separator />
-                                    <DetailRow label={t('billingCycle')} value={tCycle(sub.billingCycle)} />
+                                    <DetailRow label={t('cancelledAt')} value={formatDate(sub.cancelledAt)} />
+                                </>
+                            )}
+                            {sub.paymentMethod && (
+                                <>
                                     <Separator />
-                                    <DetailRow label={t('nextBillingDate')} value={formatDate(sub.nextBillingDate)} />
+                                    <DetailRow label={t('paymentMethod')} value={sub.paymentMethod.name} />
+                                </>
+                            )}
+                            {sub.categories?.length > 0 && (
+                                <>
                                     <Separator />
-                                    <DetailRow label={t('startDate')} value={formatDate(sub.startDate)} />
-                                    {sub.cancelledAt && (
-                                        <>
-                                            <Separator />
-                                            <DetailRow label={t('cancelledAt')} value={formatDate(sub.cancelledAt)} />
-                                        </>
-                                    )}
-                                    {sub.url && (
-                                        <>
-                                            <Separator />
-                                            <div className="flex items-center justify-between py-3">
-                                                <span className="text-sm text-muted-foreground">{t('website')}</span>
-                                                <a
-                                                    href={sub.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-sm text-primary underline-offset-4 hover:underline truncate max-w-xs"
-                                                >
-                                                    {sub.url}
-                                                </a>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </CardContent>
-                            <CardFooter>
-                                <div className="flex gap-2">
-                                    <Button variant="outline" asChild>
-                                        <Link href={`/dashboard/${id}/edit`}>{tCommon('edit')}</Link>
+                                    <div className="flex items-center justify-between py-3">
+                                        <span className="text-sm text-muted-foreground">{t('categories')}</span>
+                                        <div className="flex flex-wrap gap-1 justify-end">
+                                            {sub.categories.map(c => (
+                                                <Badge key={c.id} variant="outline" className="text-xs">{c.name}</Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            {sub.notes && (
+                                <>
+                                    <Separator />
+                                    <DetailRow label={t('notes')} value={sub.notes} />
+                                </>
+                            )}
+                            {sub.url && (
+                                <>
+                                    <Separator />
+                                    <div className="flex items-center justify-between py-3">
+                                        <span className="text-sm text-muted-foreground">{t('website')}</span>
+                                        <a
+                                            href={sub.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm text-primary underline-offset-4 hover:underline truncate max-w-xs"
+                                        >
+                                            {sub.url}
+                                        </a>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <div className="flex gap-2">
+                            <Button variant="outline" asChild>
+                                <Link href={`/dashboard/${id}/edit`}>{tCommon('edit')}</Link>
+                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" disabled={deleting}>
+                                        {deleting ? t('deleting') : tCommon('delete')}
                                     </Button>
-                                    <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                            <Button variant="destructive" disabled={deleting}>
-                                                {deleting ? t('deleting') : tCommon('delete')}
-                                            </Button>
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                                <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    {t('deleteDesc', { name: sub.name })}
-                                                </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                                <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-                                                <AlertDialogAction variant="destructive" onClick={handleDelete}>
-                                                    {tCommon('delete')}
-                                                </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                    </AlertDialog>
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    ) : (
-                        !error && <p className="text-muted-foreground">Subscription not found.</p>
-                    )}
-                </div>
-            </main>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            {t('deleteDesc', { name: sub.name })}
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                                        <AlertDialogAction variant="destructive" onClick={handleDelete}>
+                                            {tCommon('delete')}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
+                    </CardFooter>
+                </Card>
+            ) : (
+                !error && <p className="text-muted-foreground">Subscription not found.</p>
+            )}
         </div>
     );
 }

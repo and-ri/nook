@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  .container {
+    padding-inline: 1rem;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

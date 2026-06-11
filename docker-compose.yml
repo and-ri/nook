@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: nook
+      POSTGRES_PASSWORD: nook
+      POSTGRES_DB: nook
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nook"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://nook:nook@postgres:5432/nook
+      JWT_SECRET: ${JWT_SECRET}
+      ORIGIN_URL: http://localhost:3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:

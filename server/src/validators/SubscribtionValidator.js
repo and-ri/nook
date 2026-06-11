@@ -14,6 +14,7 @@ const schemaAdd = z.object({
     cancelledAt:     z.coerce.date({ error: 'Cancelled at must be a valid date' }).optional(),
     notes:           z.string().max(500, 'Notes must be less than 500 characters').optional(),
     categories:      z.array(z.string().uuid('Each category ID must be a valid UUID')).optional(),
+    paymentMethodId: z.string().uuid('Payment method ID must be a valid UUID').optional().nullable(),
 });
 
 const schemaUpdate = schemaAdd.partial();

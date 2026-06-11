@@ -55,3 +55,12 @@ export const getStats = () => fetchApi('/subscriptions/stats');
 
 // Categories
 export const getCategories = () => fetchApi('/categories');
+export const createCategory = (data) => fetchApi('/categories', { method: 'POST', body: data });
+export const updateCategory = (id, data) => fetchApi(`/categories/${id}`, { method: 'PATCH', body: data });
+export const deleteCategory = (id) => fetchApi(`/categories/${id}`, { method: 'DELETE' });
+
+// Payment methods
+export const getPaymentMethods = () => fetchApi('/payment-methods');
+export const createPaymentMethod = (data) => fetchApi('/payment-methods', { method: 'POST', body: data });
+export const updatePaymentMethod = (id, data) => fetchApi(`/payment-methods/${id}`, { method: 'PATCH', body: data });
+export const deletePaymentMethod = (id) => fetchApi(`/payment-methods/${id}`, { method: 'DELETE' });

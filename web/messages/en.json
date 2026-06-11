@@ -29,10 +29,18 @@
     "haveAccount": "Already have an account? Sign in"
   },
   "Header": {
-    "brand": "Subscription Manager"
+    "brand": "Nook"
   },
   "Footer": {
-    "tagline": "Track your subscriptions"
+    "github": "GitHub"
+  },
+  "Nav": {
+    "dashboard": "Subscriptions",
+    "reports": "Reports",
+    "categories": "Categories",
+    "paymentMethods": "Payment Methods",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "Dashboard": {
     "title": "Subscriptions",
@@ -40,8 +48,13 @@
     "subscriptionCount": "{count, plural, one {# subscription} other {# subscriptions}}",
     "noSubscriptions": "No subscriptions yet",
     "noSubscriptionsDesc": "Add your first subscription to get started.",
-    "viewDetails": "View details",
-    "failedToLoad": "Failed to load subscriptions"
+    "viewDetails": "Details",
+    "visitSite": "Visit site",
+    "failedToLoad": "Failed to load subscriptions",
+    "allCategories": "All categories",
+    "allMethods": "All methods",
+    "clearFilters": "Clear",
+    "noResults": "No subscriptions match the selected filters."
   },
   "Stats": {
     "monthlySpend": "Monthly spend",
@@ -57,6 +70,8 @@
     "namePlaceholder": "e.g. Netflix",
     "url": "Website URL",
     "urlPlaceholder": "https://example.com",
+    "logoUrl": "Logo URL (optional)",
+    "logoUrlPlaceholder": "Auto-detected from website URL",
     "amount": "Amount",
     "amountPlaceholder": "0.00",
     "currency": "Currency",
@@ -71,6 +86,10 @@
     "nextBillingDate": "Next billing date",
     "cancelledAt": "Cancelled at",
     "website": "Website",
+    "categories": "Categories",
+    "noCategoriesYet": "No categories yet.",
+    "paymentMethod": "Payment method",
+    "noPaymentMethod": "None",
     "backToList": "Back to subscriptions",
     "backToDetails": "Back to subscription",
     "creating": "Creating…",
@@ -122,10 +141,84 @@
     "savePreferences": "Save preferences",
     "savingPreferences": "Saving…",
     "preferencesSaved": "Preferences saved.",
+    "appearance": "Appearance",
+    "appearanceDescription": "Choose your preferred color theme.",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
     "backToDashboard": "Back to dashboard"
   },
   "Language": {
     "en": "English",
     "uk": "Українська"
+  },
+  "Reports": {
+    "title": "Reports",
+    "totalMonthly": "Monthly spend",
+    "totalActive": "Active subscriptions",
+    "upcoming": "Upcoming renewals",
+    "total": "Total subscriptions",
+    "byStatus": "By status",
+    "byCategory": "By category",
+    "byCycle": "By billing cycle",
+    "noData": "No data to display",
+    "noUpcoming": "No upcoming renewals in the next 30 days",
+    "allSubscriptions": "All subscriptions",
+    "colName": "Name",
+    "colAmount": "Amount",
+    "colCycle": "Cycle",
+    "colStatus": "Status",
+    "colNextDate": "Next billing",
+    "colCategory": "Categories"
+  },
+  "Category": {
+    "title": "Categories",
+    "description": "Categories help you group and filter your subscriptions.",
+    "add": "Add category",
+    "name": "Name",
+    "namePlaceholder": "e.g. Streaming",
+    "saving": "Saving…",
+    "saveButton": "Save",
+    "deleteTitle": "Delete category?",
+    "deleteDesc": "This will remove \"{name}\" from all subscriptions.",
+    "noCategories": "No categories yet",
+    "noCategoriesDesc": "Create a category to start grouping your subscriptions."
+  },
+  "Landing": {
+    "heroHeadline": "Your subscriptions, under control",
+    "heroSubtitle": "Track every subscription in one place. Know exactly what you're spending, when renewals hit, and what to cancel.",
+    "ctaPrimary": "Get started free",
+    "ctaSecondary": "Sign in",
+    "feature1Title": "Track everything",
+    "feature1Desc": "Add any subscription — streaming, SaaS, memberships. Never lose track of what you're paying for.",
+    "feature2Title": "Spending overview",
+    "feature2Desc": "See your monthly spend at a glance. Group by category and spot what's worth keeping.",
+    "feature3Title": "Renewal reminders",
+    "feature3Desc": "Know what's renewing in the next 30 days. No more surprise charges."
+  },
+  "PaymentMethod": {
+    "title": "Payment Methods",
+    "description": "Manage the payment methods used for your subscriptions.",
+    "add": "Add method",
+    "addTitle": "Add payment method",
+    "editTitle": "Edit payment method",
+    "name": "Name",
+    "namePlaceholder": "e.g. Visa *4242",
+    "type": "Type",
+    "logoUrl": "Logo URL (optional)",
+    "logoUrlPlaceholder": "https://...",
+    "saving": "Saving…",
+    "saveButton": "Save",
+    "deleteTitle": "Delete payment method?",
+    "deleteDesc": "This will remove \"{name}\". Subscriptions using it will not be deleted.",
+    "noMethods": "No payment methods yet",
+    "noMethodsDesc": "Add a card, bank, or wallet to track how you pay.",
+    "types": {
+      "card": "Card",
+      "bank": "Bank transfer",
+      "wallet": "Digital wallet",
+      "crypto": "Crypto",
+      "other": "Other"
+    }
   }
 }

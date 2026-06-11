@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
-import { Header } from "@/components/layout/Header";
+import { useTheme } from 'next-themes';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMe, updateMe, updatePassword, getCurrencies } from "@/lib/api";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Sun, Moon, Monitor } from "lucide-react";
 
 function SuccessAlert({ message }) {
     return (
@@ -23,9 +23,16 @@ function SuccessAlert({ message }) {
     );
 }
 
+const THEME_OPTIONS = [
+    { value: 'light', icon: Sun },
+    { value: 'dark', icon: Moon },
+    { value: 'system', icon: Monitor },
+];
+
 export default function SettingsPage() {
     const t = useTranslations('Settings');
     const tLang = useTranslations('Language');
+    const { theme, setTheme } = useTheme();
 
     const [user, setUser] = useState(null);
     const [currencies, setCurrencies] = useState([]);
@@ -109,12 +116,8 @@ export default function SettingsPage() {
         try {
             const res = await updateMe({ preferredCurrency: prefCurrency });
             setUser(res.user);
-
-            // Persist locale in cookie and reload so next-intl picks it up
             document.cookie = `locale=${prefLocale}; path=/; max-age=31536000`;
             setPrefSuccess(true);
-
-            // Reload page so server-side locale changes take effect
             setTimeout(() => window.location.reload(), 800);
         } catch (err) {
             setPrefError(err.message);
@@ -124,173 +127,192 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1">
-                <div className="container mx-auto py-8 max-w-2xl flex flex-col gap-6">
-                    <Button variant="ghost" size="sm" asChild className="w-fit -ml-2">
-                        <Link href="/dashboard">
-                            <ArrowLeft data-icon="inline-start" />
-                            {t('backToDashboard')}
-                        </Link>
-                    </Button>
+        <div className="container mx-auto py-8 max-w-2xl flex flex-col gap-6">
+            <Button variant="ghost" size="sm" asChild className="w-fit -ml-2">
+                <Link href="/dashboard">
+                    <ArrowLeft data-icon="inline-start" />
+                    {t('backToDashboard')}
+                </Link>
+            </Button>
 
-                    <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
 
-                    {loading ? (
-                        <div className="flex flex-col gap-4">
-                            {[1, 2, 3].map(i => (
-                                <Card key={i}>
-                                    <CardHeader>
-                                        <Skeleton className="h-5 w-1/4" />
-                                        <Skeleton className="h-4 w-1/2" />
-                                    </CardHeader>
-                                    <CardContent className="flex flex-col gap-4">
-                                        <Skeleton className="h-10 w-full" />
-                                        <Skeleton className="h-9 w-32" />
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    ) : (
-                        <>
-                            {/* Profile */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('profile')}</CardTitle>
-                                    <CardDescription>{t('profileDescription')}</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <form onSubmit={handleProfileSave} className="flex flex-col gap-4">
-                                        {profileError && (
-                                            <Alert variant="destructive">
-                                                <AlertDescription>{profileError}</AlertDescription>
-                                            </Alert>
-                                        )}
-                                        {profileSuccess && <SuccessAlert message={t('profileSaved')} />}
-                                        <FieldGroup>
-                                            <Field>
-                                                <FieldLabel htmlFor="displayName">{t('displayName')}</FieldLabel>
-                                                <Input
-                                                    id="displayName"
-                                                    value={profileName}
-                                                    onChange={e => setProfileName(e.target.value)}
-                                                    required
-                                                />
-                                            </Field>
-                                            <Field>
-                                                <FieldLabel>Email</FieldLabel>
-                                                <Input value={user?.email ?? ''} disabled />
-                                            </Field>
-                                        </FieldGroup>
-                                        <Button type="submit" disabled={profileLoading} className="w-fit">
-                                            {profileLoading ? t('savingProfile') : t('saveProfile')}
-                                        </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-
-                            {/* Password */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('password')}</CardTitle>
-                                    <CardDescription>{t('passwordDescription')}</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <form onSubmit={handlePasswordSave} className="flex flex-col gap-4">
-                                        {passwordError && (
-                                            <Alert variant="destructive">
-                                                <AlertDescription>{passwordError}</AlertDescription>
-                                            </Alert>
-                                        )}
-                                        {passwordSuccess && <SuccessAlert message={t('passwordSaved')} />}
-                                        <FieldGroup>
-                                            <Field>
-                                                <FieldLabel htmlFor="currentPassword">{t('currentPassword')}</FieldLabel>
-                                                <Input
-                                                    id="currentPassword"
-                                                    type="password"
-                                                    value={currentPassword}
-                                                    onChange={e => setCurrentPassword(e.target.value)}
-                                                    required
-                                                />
-                                            </Field>
-                                            <Field>
-                                                <FieldLabel htmlFor="newPassword">{t('newPassword')}</FieldLabel>
-                                                <Input
-                                                    id="newPassword"
-                                                    type="password"
-                                                    value={newPassword}
-                                                    onChange={e => setNewPassword(e.target.value)}
-                                                    required
-                                                    minLength={8}
-                                                />
-                                            </Field>
-                                        </FieldGroup>
-                                        <Button type="submit" disabled={passwordLoading} className="w-fit">
-                                            {passwordLoading ? t('savingPassword') : t('savePassword')}
-                                        </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-
-                            {/* Preferences */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('preferences')}</CardTitle>
-                                    <CardDescription>{t('preferencesDescription')}</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <form onSubmit={handlePrefSave} className="flex flex-col gap-4">
-                                        {prefError && (
-                                            <Alert variant="destructive">
-                                                <AlertDescription>{prefError}</AlertDescription>
-                                            </Alert>
-                                        )}
-                                        {prefSuccess && <SuccessAlert message={t('preferencesSaved')} />}
-                                        <FieldGroup>
-                                            <Field>
-                                                <FieldLabel>{t('language')}</FieldLabel>
-                                                <Select value={prefLocale} onValueChange={setPrefLocale}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            <SelectItem value="en">{tLang('en')}</SelectItem>
-                                                            <SelectItem value="uk">{tLang('uk')}</SelectItem>
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-                                            <Field>
-                                                <FieldLabel>{t('preferredCurrency')}</FieldLabel>
-                                                <Select value={prefCurrency} onValueChange={setPrefCurrency}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            {currencies.map(c => (
-                                                                <SelectItem key={c.code} value={c.code}>
-                                                                    {c.code} — {c.name}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-                                        </FieldGroup>
-                                        <Button type="submit" disabled={prefLoading} className="w-fit">
-                                            {prefLoading ? t('savingPreferences') : t('savePreferences')}
-                                        </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        </>
-                    )}
+            {loading ? (
+                <div className="flex flex-col gap-4">
+                    {[1, 2, 3, 4].map(i => (
+                        <Card key={i}>
+                            <CardHeader>
+                                <Skeleton className="h-5 w-1/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                            </CardHeader>
+                            <CardContent className="flex flex-col gap-4">
+                                <Skeleton className="h-10 w-full" />
+                                <Skeleton className="h-9 w-32" />
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
-            </main>
+            ) : (
+                <>
+                    {/* Appearance */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('appearance')}</CardTitle>
+                            <CardDescription>{t('appearanceDescription')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex gap-3">
+                                {THEME_OPTIONS.map(({ value, icon: Icon }) => (
+                                    <Button
+                                        key={value}
+                                        variant={theme === value ? 'default' : 'outline'}
+                                        size="sm"
+                                        onClick={() => setTheme(value)}
+                                        className="flex-1 gap-2"
+                                    >
+                                        <Icon className="h-4 w-4" />
+                                        {t(`theme${value.charAt(0).toUpperCase()}${value.slice(1)}`)}
+                                    </Button>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Profile */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('profile')}</CardTitle>
+                            <CardDescription>{t('profileDescription')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleProfileSave} className="flex flex-col gap-4">
+                                {profileError && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{profileError}</AlertDescription>
+                                    </Alert>
+                                )}
+                                {profileSuccess && <SuccessAlert message={t('profileSaved')} />}
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel htmlFor="displayName">{t('displayName')}</FieldLabel>
+                                        <Input
+                                            id="displayName"
+                                            value={profileName}
+                                            onChange={e => setProfileName(e.target.value)}
+                                            required
+                                        />
+                                    </Field>
+                                    <Field>
+                                        <FieldLabel>Email</FieldLabel>
+                                        <Input value={user?.email ?? ''} disabled />
+                                    </Field>
+                                </FieldGroup>
+                                <Button type="submit" disabled={profileLoading} className="w-fit">
+                                    {profileLoading ? t('savingProfile') : t('saveProfile')}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Password */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('password')}</CardTitle>
+                            <CardDescription>{t('passwordDescription')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handlePasswordSave} className="flex flex-col gap-4">
+                                {passwordError && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{passwordError}</AlertDescription>
+                                    </Alert>
+                                )}
+                                {passwordSuccess && <SuccessAlert message={t('passwordSaved')} />}
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel htmlFor="currentPassword">{t('currentPassword')}</FieldLabel>
+                                        <Input
+                                            id="currentPassword"
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={e => setCurrentPassword(e.target.value)}
+                                            required
+                                        />
+                                    </Field>
+                                    <Field>
+                                        <FieldLabel htmlFor="newPassword">{t('newPassword')}</FieldLabel>
+                                        <Input
+                                            id="newPassword"
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={e => setNewPassword(e.target.value)}
+                                            required
+                                            minLength={8}
+                                        />
+                                    </Field>
+                                </FieldGroup>
+                                <Button type="submit" disabled={passwordLoading} className="w-fit">
+                                    {passwordLoading ? t('savingPassword') : t('savePassword')}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Preferences */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('preferences')}</CardTitle>
+                            <CardDescription>{t('preferencesDescription')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handlePrefSave} className="flex flex-col gap-4">
+                                {prefError && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{prefError}</AlertDescription>
+                                    </Alert>
+                                )}
+                                {prefSuccess && <SuccessAlert message={t('preferencesSaved')} />}
+                                <FieldGroup>
+                                    <Field>
+                                        <FieldLabel>{t('language')}</FieldLabel>
+                                        <Select value={prefLocale} onValueChange={setPrefLocale}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="en">{tLang('en')}</SelectItem>
+                                                    <SelectItem value="uk">{tLang('uk')}</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+                                    <Field>
+                                        <FieldLabel>{t('preferredCurrency')}</FieldLabel>
+                                        <Select value={prefCurrency} onValueChange={setPrefCurrency}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {currencies.map(c => (
+                                                        <SelectItem key={c.code} value={c.code}>
+                                                            {c.code} — {c.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+                                </FieldGroup>
+                                <Button type="submit" disabled={prefLoading} className="w-fit">
+                                    {prefLoading ? t('savingPreferences') : t('savePreferences')}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </>
+            )}
         </div>
     );
 }
