@@ -4,12 +4,6 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.js');
 
 export default withNextIntl({
     output: 'standalone',
-    async rewrites() {
-        return [
-            {
-                source: '/api/:path*',
-                destination: `${process.env.API_BASE_URL || 'http://localhost:3000'}/:path*`,
-            },
-        ];
-    },
+    // The /api proxy lives in app/api/[...path]/route.js so the backend URL is
+    // resolved at runtime (process.env.API_BASE_URL), not frozen at build time.
 });

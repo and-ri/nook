@@ -5,5 +5,5 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm exec prisma generate
-EXPOSE 3000
+EXPOSE 3001
 CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node src/index.js"]

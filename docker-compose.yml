@@ -15,8 +15,10 @@ services:
 
   server:
     image: ghcr.io/and-ri/nook-server:latest
-    ports:
-      - "3001:3001"
+    # Not published to the host — reached internally by web as http://server:3001.
+    # Add `ports: ["3002:3001"]` if you need to hit the API directly for debugging.
+    expose:
+      - "3001"
     environment:
       PORT: 3001
       DATABASE_URL: postgresql://nook:nook@postgres:5432/nook
