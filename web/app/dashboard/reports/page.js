@@ -13,7 +13,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SubscriptionIcon } from '@/components/ui/SubscriptionIcon';
 import { StatusIcon } from '@/components/ui/StatusIcon';
 import { getSubscriptions, getStats } from '@/lib/api';
-import { toMonthly } from '@/lib/billing';
 
 const STATUS_COLORS = {
     ACTIVE: '#22c55e', TRIAL: '#3b82f6', PAUSED: '#f59e0b', CANCELLED: '#ef4444',
@@ -66,11 +65,15 @@ export default function ReportsPage() {
         name: ts(name), value, color: STATUS_COLORS[name],
     }));
 
+    // All monetary aggregations use `convertedMonthly` — each subscription's
+    // monthly-equivalent cost already converted to the preferred currency by
+    // the server — so subscriptions in different currencies are comparable.
+    const monthlyOf = s => s.convertedMonthly ?? 0;
+
     // Billing cycle breakdown (monthly equivalents, in preferredCurrency)
     const cycleMap = {};
     subs.filter(s => s.status === 'ACTIVE').forEach(s => {
-        const monthly = toMonthly(s.amount, s.billingCycle);
-        cycleMap[s.billingCycle] = (cycleMap[s.billingCycle] ?? 0) + monthly;
+        cycleMap[s.billingCycle] = (cycleMap[s.billingCycle] ?? 0) + monthlyOf(s);
     });
     const cycleData = Object.entries(cycleMap).map(([cycle, value]) => ({
         name: tc(cycle), value: Math.round(value * 100) / 100,
@@ -80,10 +83,10 @@ export default function ReportsPage() {
     const catMap = {};
     subs.forEach(s => {
         if (!s.categories?.length) {
-            catMap['Uncategorized'] = (catMap['Uncategorized'] ?? 0) + toMonthly(s.amount, s.billingCycle);
+            catMap['Uncategorized'] = (catMap['Uncategorized'] ?? 0) + monthlyOf(s);
         } else {
             s.categories.forEach(c => {
-                catMap[c.name] = (catMap[c.name] ?? 0) + toMonthly(s.amount, s.billingCycle);
+                catMap[c.name] = (catMap[c.name] ?? 0) + monthlyOf(s);
             });
         }
     });
@@ -94,7 +97,7 @@ export default function ReportsPage() {
     const currency = stats?.currency ?? 'USD';
 
     // Sorted subscriptions table
-    const sorted = [...subs].sort((a, b) => toMonthly(b.amount, b.billingCycle) - toMonthly(a.amount, a.billingCycle));
+    const sorted = [...subs].sort((a, b) => monthlyOf(b) - monthlyOf(a));
 
     return (
         <div className="container mx-auto py-8 flex flex-col gap-6">

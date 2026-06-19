@@ -23,6 +23,9 @@ SubscribtionRouter.get('/', async (req, res, next) => {
     try {
         await advanceOverdueBillingDates(userId);
 
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        const targetCurrency = user?.preferredCurrency ?? 'USD';
+
         const subscriptions = await prisma.subscription.findMany({
             where:   { userId, ...(status && { status }) },
             include: SUBSCRIPTION_INCLUDE,
@@ -31,7 +34,20 @@ SubscribtionRouter.get('/', async (req, res, next) => {
             take: limit,
         });
 
-        res.json({ subscriptions });
+        // Attach each subscription's monthly-equivalent cost converted to the
+        // user's preferred currency, so clients can aggregate across mixed
+        // currencies without re-implementing conversion. A rates-provider
+        // outage must not break the list itself, so fall back to null.
+        const withConverted = await Promise.all(subscriptions.map(async sub => {
+            const monthly = toMonthly(sub.amount, sub.billingCycle);
+            let converted = null;
+            try {
+                converted = await convert(monthly, sub.currency, targetCurrency);
+            } catch { /* rates unavailable — leave convertedMonthly null */ }
+            return { ...sub, convertedMonthly: converted, convertedCurrency: targetCurrency };
+        }));
+
+        res.json({ subscriptions: withConverted });
     } catch (err) { next(err); }
 });
 
