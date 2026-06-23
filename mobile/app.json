@@ -9,8 +9,8 @@
     "ios": {
       "supportsTablet": false,
       "icon": {
-        "light": "./assets/ios-icon-light.png",
-        "dark": "./assets/ios-icon-dark.png"
+        "light": "./assets/ios/icon-light.png",
+        "dark": "./assets/ios/icon-dark.png"
       },
       "bundleIdentifier": "ua.net.and.nook",
       "infoPlist": {
