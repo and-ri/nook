@@ -11,6 +11,10 @@
       "icon": {
         "light": "./assets/ios-icon-light.png",
         "dark": "./assets/ios-icon-dark.png"
+      },
+      "bundleIdentifier": "ua.net.and.nook",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -24,15 +28,23 @@
     "plugins": [
       "expo-localization",
       "expo-notifications",
-      ["expo-splash-screen", {
-        "backgroundColor": "#FFFFFF",
-        "image": "./assets/splash-icon-light.png",
-        "dark": {
-          "image": "./assets/splash-icon-dark.png",
-          "backgroundColor": "#181818"
-        },
-        "imageWidth": 200
-      }]
-    ]
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/splash-icon-light.png",
+          "dark": {
+            "image": "./assets/splash-icon-dark.png",
+            "backgroundColor": "#181818"
+          },
+          "imageWidth": 200
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fc381664-b9c0-4f92-958b-d807ff4f4af4"
+      }
+    }
   }
 }
