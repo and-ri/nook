@@ -20,8 +20,8 @@
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_API_URL": "https://subscree.app/api",
-        "EXPO_PUBLIC_UMAMI_URL": "",
-        "EXPO_PUBLIC_UMAMI_WEBSITE_ID": ""
+        "EXPO_PUBLIC_UMAMI_URL": "https://umami.and.net.ua",
+        "EXPO_PUBLIC_UMAMI_WEBSITE_ID": "68993684-fa74-4ff9-af64-f03e4791a3fb"
       }
     }
   },
