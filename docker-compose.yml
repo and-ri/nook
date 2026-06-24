@@ -2,32 +2,32 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: nook
-      POSTGRES_PASSWORD: nook
-      POSTGRES_DB: nook
+      POSTGRES_USER: subscree
+      POSTGRES_PASSWORD: subscree
+      POSTGRES_DB: subscree
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nook"]
+      test: ["CMD-SHELL", "pg_isready -U subscree"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   server:
-    image: ghcr.io/and-ri/nook-server:latest
+    image: ghcr.io/and-ri/subscree-server:latest
     # Not published to the host — reached internally by web as http://server:3001.
     # Add `ports: ["3002:3001"]` if you need to hit the API directly for debugging.
     expose:
       - "3001"
     environment:
       PORT: 3001
-      DATABASE_URL: postgresql://nook:nook@postgres:5432/nook
+      DATABASE_URL: postgresql://subscree:subscree@postgres:5432/subscree
       JWT_SECRET: ${JWT_SECRET}
       ORIGIN_URL: http://localhost:3001
       # Public web URL used in email links (e.g. password reset)
       APP_URL: ${APP_URL:-http://localhost:3001}
       # Email delivery — set RESEND_API_KEY or the SMTP_* vars to enable reminders
-      EMAIL_FROM: ${EMAIL_FROM:-Nook <no-reply@nook.app>}
+      EMAIL_FROM: ${EMAIL_FROM:-Subscree <no-reply@subscree.app>}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -39,7 +39,7 @@ services:
         condition: service_healthy
 
   web:
-    image: ghcr.io/and-ri/nook-web:latest
+    image: ghcr.io/and-ri/subscree-web:latest
     ports:
       - "3001:3001"
     environment:
