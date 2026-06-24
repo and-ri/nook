@@ -379,8 +379,10 @@ export default function HomePage() {
                         </div>
                         <p className="mt-2 text-sm text-muted-foreground">{t('footerTagline')}</p>
                     </div>
-                    <div className="flex items-center gap-5 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
                         <a href="#features" className="transition-colors hover:text-foreground">{t('navFeatures')}</a>
+                        <Link href="/privacy" className="transition-colors hover:text-foreground">{t('privacy')}</Link>
+                        <Link href="/terms" className="transition-colors hover:text-foreground">{t('terms')}</Link>
                         <Link href="/login" className="transition-colors hover:text-foreground">{tAuth('login')}</Link>
                         <Link
                             href="https://github.com/and-ri/subscree"

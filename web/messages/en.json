@@ -322,7 +322,9 @@
     "showcase3Desc": "Invite family or colleagues to a shared team. Everyone sees the same subscriptions, and each member gets their own reminders in their own timezone.",
     "seoTitle": "Subscree — Track all your subscriptions in one place",
     "seoDescription": "Subscree helps you track every subscription, see your real monthly spend, and get reminded before each renewal. Free to start — on web, iOS, and Android.",
-    "ogImageAlt": "Subscree — subscription tracker dashboard"
+    "ogImageAlt": "Subscree — subscription tracker dashboard",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
   },
   "PaymentMethod": {
     "title": "Payment Methods",
