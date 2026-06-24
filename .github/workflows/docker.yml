@@ -25,7 +25,7 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository_owner }}/nook-server
+          images: ghcr.io/${{ github.repository_owner }}/subscree-server
           tags: |
             type=sha,prefix=sha-,format=short
             type=raw,value=latest
@@ -59,7 +59,7 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository_owner }}/nook-web
+          images: ghcr.io/${{ github.repository_owner }}/subscree-web
           tags: |
             type=sha,prefix=sha-,format=short
             type=raw,value=latest
