@@ -60,9 +60,10 @@ export default function SettingsPage() {
 
     // Notifications
     const [notifyEnabled, setNotifyEnabled] = useState(false);
-    const [notifyMode, setNotifyMode] = useState('PER_SUBSCRIPTION');
     const [notifyDaysBefore, setNotifyDaysBefore] = useState(3);
-    const [notifyDigestFrequency, setNotifyDigestFrequency] = useState('WEEKLY');
+    const [remindBefore, setRemindBefore] = useState(true);
+    const [remindOnDueDate, setRemindOnDueDate] = useState(false);
+    const [weeklySummary, setWeeklySummary] = useState(false);
     const [notifyLoading, setNotifyLoading] = useState(false);
     const [notifyError, setNotifyError] = useState(null);
     const [notifySuccess, setNotifySuccess] = useState(false);
@@ -80,9 +81,10 @@ export default function SettingsPage() {
                 setProfileName(userRes.user.name);
                 setPrefCurrency(userRes.user.preferredCurrency);
                 setNotifyEnabled(userRes.user.notifyEnabled ?? false);
-                setNotifyMode(userRes.user.notifyMode ?? 'PER_SUBSCRIPTION');
                 setNotifyDaysBefore(userRes.user.notifyDaysBefore ?? 3);
-                setNotifyDigestFrequency(userRes.user.notifyDigestFrequency ?? 'WEEKLY');
+                setRemindBefore(userRes.user.remindBefore ?? true);
+                setRemindOnDueDate(userRes.user.remindOnDueDate ?? false);
+                setWeeklySummary(userRes.user.weeklySummary ?? false);
                 setCurrencies(currRes.currencies || []);
             })
             .finally(() => setLoading(false));
@@ -147,9 +149,10 @@ export default function SettingsPage() {
         try {
             const res = await updateMe({
                 notifyEnabled,
-                notifyMode,
                 notifyDaysBefore: Number(notifyDaysBefore),
-                notifyDigestFrequency,
+                remindBefore,
+                remindOnDueDate,
+                weeklySummary,
             });
             setUser(res.user);
             setNotifySuccess(true);
@@ -375,52 +378,69 @@ export default function SettingsPage() {
                                             </SelectContent>
                                         </Select>
                                     </Field>
-                                    {notifyEnabled && (
-                                        <>
-                                            <Field>
-                                                <FieldLabel>{t('notifyMode')}</FieldLabel>
-                                                <Select value={notifyMode} onValueChange={setNotifyMode}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            <SelectItem value="PER_SUBSCRIPTION">{t('notifyModePerSubscription')}</SelectItem>
-                                                            <SelectItem value="DIGEST">{t('notifyModeDigest')}</SelectItem>
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-                                            {notifyMode === 'PER_SUBSCRIPTION' ? (
-                                                <Field>
-                                                    <FieldLabel htmlFor="notifyDaysBefore">{t('notifyDaysBefore')}</FieldLabel>
-                                                    <Input
-                                                        id="notifyDaysBefore"
-                                                        type="number"
-                                                        min={1}
-                                                        max={60}
-                                                        value={notifyDaysBefore}
-                                                        onChange={e => setNotifyDaysBefore(e.target.value)}
-                                                    />
-                                                </Field>
-                                            ) : (
-                                                <Field>
-                                                    <FieldLabel>{t('notifyDigestFrequency')}</FieldLabel>
-                                                    <Select value={notifyDigestFrequency} onValueChange={setNotifyDigestFrequency}>
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectGroup>
-                                                                <SelectItem value="WEEKLY">{t('notifyDigestWeekly')}</SelectItem>
-                                                                <SelectItem value="MONTHLY">{t('notifyDigestMonthly')}</SelectItem>
-                                                            </SelectGroup>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </Field>
-                                            )}
-                                        </>
+
+                                    <Field>
+                                        <FieldLabel>{t('remindBefore')}</FieldLabel>
+                                        <Select value={remindBefore ? 'on' : 'off'} onValueChange={v => setRemindBefore(v === 'on')}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="on">{t('notifyOn')}</SelectItem>
+                                                    <SelectItem value="off">{t('notifyOff')}</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+                                    {remindBefore && (
+                                        <Field>
+                                            <FieldLabel htmlFor="notifyDaysBefore">{t('notifyDaysBefore')}</FieldLabel>
+                                            <Input
+                                                id="notifyDaysBefore"
+                                                type="number"
+                                                min={1}
+                                                max={60}
+                                                value={notifyDaysBefore}
+                                                onChange={e => setNotifyDaysBefore(e.target.value)}
+                                            />
+                                        </Field>
                                     )}
+
+                                    <Field>
+                                        <FieldLabel>{t('remindOnDueDate')}</FieldLabel>
+                                        <Select value={remindOnDueDate ? 'on' : 'off'} onValueChange={v => setRemindOnDueDate(v === 'on')}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="on">{t('notifyOn')}</SelectItem>
+                                                    <SelectItem value="off">{t('notifyOff')}</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+
+                                    <Field>
+                                        <FieldLabel>{t('weeklySummary')}</FieldLabel>
+                                        <Select value={weeklySummary ? 'on' : 'off'} onValueChange={v => setWeeklySummary(v === 'on')}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="on">{t('notifyOn')}</SelectItem>
+                                                    <SelectItem value="off">{t('notifyOff')}</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('remindersDeliveryNote')}
+                                        {user?.timezone ? ` (${user.timezone})` : ''}
+                                    </p>
                                 </FieldGroup>
                                 <Button type="submit" disabled={notifyLoading} className="w-fit">
                                     {notifyLoading ? t('savingNotifications') : t('saveNotifications')}

@@ -9,14 +9,21 @@ import { CURRENCY_CODES } from '../constants/currencies.js';
 const UserRouter = express.Router();
 UserRouter.use(AuthMiddleware);
 
+// Accept any IANA zone the runtime recognises (e.g. "Europe/Kyiv").
+function isValidTimezone(tz) {
+    try { Intl.DateTimeFormat(undefined, { timeZone: tz }); return true; } catch { return false; }
+}
+
 const profileSchema = z.object({
     name:              z.string().min(1, 'Name is required').max(100).optional(),
     preferredCurrency: z.enum(CURRENCY_CODES, { error: 'Invalid currency code' }).optional(),
-    notifyEnabled:         z.boolean().optional(),
-    notifyMode:            z.enum(['PER_SUBSCRIPTION', 'DIGEST']).optional(),
-    notifyDaysBefore:      z.number().int().min(1).max(60).optional(),
-    notifyDigestFrequency: z.enum(['WEEKLY', 'MONTHLY']).optional(),
-    pushEnabled:           z.boolean().optional(),
+    timezone:          z.string().refine(isValidTimezone, 'Invalid timezone').optional(),
+    notifyEnabled:     z.boolean().optional(),
+    notifyDaysBefore:  z.number().int().min(1).max(60).optional(),
+    remindBefore:      z.boolean().optional(),
+    remindOnDueDate:   z.boolean().optional(),
+    weeklySummary:     z.boolean().optional(),
+    pushEnabled:       z.boolean().optional(),
 });
 
 const passwordSchema = z.object({
@@ -31,15 +38,17 @@ const pushTokenSchema = z.object({
 
 function safeUser(user) {
     return {
-        id:                    user.id,
-        email:                 user.email,
-        name:                  user.name,
-        preferredCurrency:     user.preferredCurrency,
-        notifyEnabled:         user.notifyEnabled,
-        notifyMode:            user.notifyMode,
-        notifyDaysBefore:      user.notifyDaysBefore,
-        notifyDigestFrequency: user.notifyDigestFrequency,
-        pushEnabled:           user.pushEnabled,
+        id:                user.id,
+        email:             user.email,
+        name:              user.name,
+        preferredCurrency: user.preferredCurrency,
+        timezone:          user.timezone,
+        notifyEnabled:     user.notifyEnabled,
+        notifyDaysBefore:  user.notifyDaysBefore,
+        remindBefore:      user.remindBefore,
+        remindOnDueDate:   user.remindOnDueDate,
+        weeklySummary:     user.weeklySummary,
+        pushEnabled:       user.pushEnabled,
     };
 }
 

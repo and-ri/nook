@@ -175,15 +175,15 @@
     "notifyEnabled": "Email-нагадування",
     "notifyOn": "Увімкнено",
     "notifyOff": "Вимкнено",
-    "notifyMode": "Тип нагадування",
-    "notifyModePerSubscription": "По кожній підписці (за N днів до оплати)",
-    "notifyModeDigest": "Дайджест (зведення майбутніх оплат)",
     "notifyDaysBefore": "Днів до оплати",
-    "notifyDigestFrequency": "Періодичність дайджесту",
-    "notifyDigestWeekly": "Щотижня",
-    "notifyDigestMonthly": "Щомісяця",
     "saveNotifications": "Зберегти нагадування",
-    "savingNotifications": "Збереження…"
+    "savingNotifications": "Збереження…",
+    "timezone": "Часовий пояс",
+    "timezoneDetected": "Визначається автоматично з вашого пристрою.",
+    "remindBefore": "Нагадувати перед платежем",
+    "remindOnDueDate": "Нагадувати в день списання",
+    "weeklySummary": "Тижневий підсумок щопонеділка",
+    "remindersDeliveryNote": "Нагадування приходять вранці (9–12) за вашим часовим поясом."
   },
   "Language": {
     "en": "English",
@@ -220,7 +220,10 @@
     "deleteTeam": "Видалити команду",
     "deleteConfirm": "Видалити цю команду та всі її підписки? Дію не можна скасувати.",
     "selectTeam": "Оберіть команду",
-    "role": { "OWNER": "Власник", "MEMBER": "Учасник" }
+    "role": {
+      "OWNER": "Власник",
+      "MEMBER": "Учасник"
+    }
   },
   "Invite": {
     "checking": "Перевіряємо ваше запрошення…",
@@ -364,6 +367,7 @@
     "CATEGORY_NAME_EXISTS": "Категорія з такою назвою вже існує",
     "CATEGORY_NOT_FOUND": "Категорію не знайдено",
     "PAYMENT_METHOD_NOT_FOUND": "Спосіб оплати не знайдено",
-    "INTERNAL_ERROR": "Щось пішло не так. Спробуйте ще раз."
+    "INTERNAL_ERROR": "Щось пішло не так. Спробуйте ще раз.",
+    "VALIDATION_TIMEZONE_INVALID": "Невірний часовий пояс"
   }
 }

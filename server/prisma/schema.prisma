@@ -21,16 +21,6 @@ enum SubscriptionStatus {
     TRIAL
 }
 
-enum NotificationMode {
-    PER_SUBSCRIPTION
-    DIGEST
-}
-
-enum DigestFrequency {
-    WEEKLY
-    MONTHLY
-}
-
 enum TeamRole {
     OWNER
     MEMBER
@@ -54,12 +44,19 @@ model User {
     activeTeam   Team?       @relation("ActiveTeam", fields: [activeTeamId], references: [id], onDelete: SetNull)
     reminderLogs ReminderLog[]
 
-    // Payment reminder notifications
-    notifyEnabled         Boolean          @default(false)
-    notifyMode            NotificationMode @default(PER_SUBSCRIPTION)
-    notifyDaysBefore      Int              @default(3)
-    notifyDigestFrequency DigestFrequency  @default(WEEKLY)
-    lastDigestSentAt      DateTime?
+    // IANA timezone (e.g. "Europe/Kyiv"); reminders are delivered 09:00–12:00
+    // local. Null until a client reports it; the scheduler falls back to UTC.
+    timezone String?
+
+    // Payment reminder preferences. notifyEnabled / pushEnabled are the channel
+    // masters; the three toggles below decide WHAT is sent (and apply to both
+    // channels).
+    notifyEnabled    Boolean @default(false)
+    notifyDaysBefore Int     @default(3)
+    remindBefore     Boolean @default(true)  // N days before a payment
+    remindOnDueDate  Boolean @default(false) // on the due date
+    weeklySummary    Boolean @default(false) // Monday "this week" summary
+    lastWeeklySummaryAt DateTime?
 
     // Push notifications (Expo)
     pushEnabled   Boolean        @default(false)
@@ -157,8 +154,9 @@ model Subscription {
     @@index([teamId])
 }
 
-// One row per (user, subscription, billing occurrence) reminder sent, so each
-// team member who enabled reminders is notified exactly once per charge.
+// One row per (user, subscription, billing occurrence, kind) reminder sent, so
+// each team member who enabled reminders is notified exactly once per charge per
+// kind — "BEFORE" (N days ahead) and "DUE" (on the day) are deduped separately.
 model ReminderLog {
     id             String       @id @default(uuid())
     userId         String
@@ -166,9 +164,10 @@ model ReminderLog {
     subscriptionId String
     subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
     billingDate    DateTime
+    kind           String       @default("BEFORE")
     createdAt      DateTime     @default(now())
 
-    @@unique([userId, subscriptionId, billingDate])
+    @@unique([userId, subscriptionId, billingDate, kind])
     @@index([subscriptionId])
 }
 

@@ -11,16 +11,22 @@ function addPeriod(date, billingCycle) {
     return d;
 }
 
-// Advance nextBillingDate for any active subscription whose date is in the past.
-// Called lazily on each fetch so no cron job is needed. Scoped to a team.
+// Advance nextBillingDate for any active subscription whose billing day has
+// fully passed. Called lazily on each fetch so no cron job is needed.
+//
+// We advance only once the date is before the START of today (UTC) — not before
+// `now` — so a charge due "today" stays on today's date for the whole day. That
+// keeps it visible as due today and lets the notification scheduler fire the
+// due-date reminder during the user's morning window. Scoped to a team.
 export async function advanceOverdueBillingDates(teamId) {
     const now = new Date();
+    const startOfTodayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
     const overdue = await prisma.subscription.findMany({
         where: {
             teamId,
             status: 'ACTIVE',
-            nextBillingDate: { lt: now },
+            nextBillingDate: { lt: startOfTodayUTC },
         },
         select: { id: true, nextBillingDate: true, billingCycle: true },
     });
@@ -29,7 +35,7 @@ export async function advanceOverdueBillingDates(teamId) {
 
     await Promise.all(overdue.map(sub => {
         let date = new Date(sub.nextBillingDate);
-        while (date <= now) date = addPeriod(date, sub.billingCycle);
+        while (date < startOfTodayUTC) date = addPeriod(date, sub.billingCycle);
 
         return prisma.subscription.update({
             where: { id: sub.id },

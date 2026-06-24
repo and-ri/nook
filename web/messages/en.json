@@ -175,15 +175,15 @@
     "notifyEnabled": "Email reminders",
     "notifyOn": "On",
     "notifyOff": "Off",
-    "notifyMode": "Reminder type",
-    "notifyModePerSubscription": "Per subscription (N days before each payment)",
-    "notifyModeDigest": "Digest (summary of upcoming payments)",
     "notifyDaysBefore": "Days before payment",
-    "notifyDigestFrequency": "Digest frequency",
-    "notifyDigestWeekly": "Weekly",
-    "notifyDigestMonthly": "Monthly",
     "saveNotifications": "Save reminders",
-    "savingNotifications": "Saving…"
+    "savingNotifications": "Saving…",
+    "timezone": "Timezone",
+    "timezoneDetected": "Detected automatically from your device.",
+    "remindBefore": "Remind me before a payment",
+    "remindOnDueDate": "Remind me on the due date",
+    "weeklySummary": "Weekly summary every Monday",
+    "remindersDeliveryNote": "Reminders arrive in the morning (9–12) in your timezone."
   },
   "Language": {
     "en": "English",
@@ -220,7 +220,10 @@
     "deleteTeam": "Delete team",
     "deleteConfirm": "Delete this team and all its subscriptions? This cannot be undone.",
     "selectTeam": "Select team",
-    "role": { "OWNER": "Owner", "MEMBER": "Member" }
+    "role": {
+      "OWNER": "Owner",
+      "MEMBER": "Member"
+    }
   },
   "Invite": {
     "checking": "Checking your invitation…",
@@ -364,6 +367,7 @@
     "CATEGORY_NAME_EXISTS": "A category with this name already exists",
     "CATEGORY_NOT_FOUND": "Category not found",
     "PAYMENT_METHOD_NOT_FOUND": "Payment method not found",
-    "INTERNAL_ERROR": "Something went wrong. Please try again."
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "VALIDATION_TIMEZONE_INVALID": "Invalid timezone"
   }
 }

@@ -83,9 +83,11 @@ export default function SettingsScreen({ navigation }) {
 
   // Notifications
   const [notifyEnabled, setNotifyEnabled] = useState(false);
-  const [notifyMode, setNotifyMode] = useState('PER_SUBSCRIPTION');
   const [notifyDaysBefore, setNotifyDaysBefore] = useState('3');
-  const [notifyDigestFrequency, setNotifyDigestFrequency] = useState('WEEKLY');
+  const [remindBefore, setRemindBefore] = useState(true);
+  const [remindOnDueDate, setRemindOnDueDate] = useState(false);
+  const [weeklySummary, setWeeklySummary] = useState(false);
+  const [timezone, setTimezone] = useState(null);
   const [notifySaving, setNotifySaving] = useState(false);
   const [notifyMsg, setNotifyMsg] = useState(null);
 
@@ -97,9 +99,11 @@ export default function SettingsScreen({ navigation }) {
         setCurrency(u.preferredCurrency ?? 'USD');
         setPushEnabled(u.pushEnabled ?? false);
         setNotifyEnabled(u.notifyEnabled ?? false);
-        setNotifyMode(u.notifyMode ?? 'PER_SUBSCRIPTION');
         setNotifyDaysBefore(String(u.notifyDaysBefore ?? 3));
-        setNotifyDigestFrequency(u.notifyDigestFrequency ?? 'WEEKLY');
+        setRemindBefore(u.remindBefore ?? true);
+        setRemindOnDueDate(u.remindOnDueDate ?? false);
+        setWeeklySummary(u.weeklySummary ?? false);
+        setTimezone(u.timezone ?? null);
         setCurrencies(currRes.currencies || []);
       })
       .catch(() => {});
@@ -154,9 +158,10 @@ export default function SettingsScreen({ navigation }) {
     try {
       await updateMe({
         notifyEnabled,
-        notifyMode,
         notifyDaysBefore: Number(notifyDaysBefore) || 3,
-        notifyDigestFrequency,
+        remindBefore,
+        remindOnDueDate,
+        weeklySummary,
       });
       setNotifyMsg(t('notificationsSaved'));
     } catch {
@@ -327,47 +332,39 @@ export default function SettingsScreen({ navigation }) {
           <SectionCard title={t('notifications')} description={t('notificationsDescription')}>
             <Success message={notifyMsg} />
             <HStack className="items-center justify-between">
-              <Text className="text-typography-900">{t('notifyEnabled')}</Text>
+              <Text className="text-typography-900 flex-1 mr-3">{t('notifyEnabled')}</Text>
               <Switch value={notifyEnabled} onValueChange={setNotifyEnabled} />
             </HStack>
 
-            {notifyEnabled && (
-              <>
-                <Field label={t('notifyMode')}>
-                  <AppSelect
-                    value={notifyMode}
-                    onValueChange={setNotifyMode}
-                    options={[
-                      { label: t('notifyModePerSubscription'), value: 'PER_SUBSCRIPTION' },
-                      { label: t('notifyModeDigest'), value: 'DIGEST' },
-                    ]}
+            <HStack className="items-center justify-between">
+              <Text className="text-typography-900 flex-1 mr-3">{t('remindBefore')}</Text>
+              <Switch value={remindBefore} onValueChange={setRemindBefore} />
+            </HStack>
+            {remindBefore && (
+              <Field label={t('notifyDaysBefore')}>
+                <Input>
+                  <InputField
+                    value={notifyDaysBefore}
+                    onChangeText={setNotifyDaysBefore}
+                    keyboardType="number-pad"
                   />
-                </Field>
-
-                {notifyMode === 'PER_SUBSCRIPTION' ? (
-                  <Field label={t('notifyDaysBefore')}>
-                    <Input>
-                      <InputField
-                        value={notifyDaysBefore}
-                        onChangeText={setNotifyDaysBefore}
-                        keyboardType="number-pad"
-                      />
-                    </Input>
-                  </Field>
-                ) : (
-                  <Field label={t('notifyDigestFrequency')}>
-                    <AppSelect
-                      value={notifyDigestFrequency}
-                      onValueChange={setNotifyDigestFrequency}
-                      options={[
-                        { label: t('notifyDigestWeekly'), value: 'WEEKLY' },
-                        { label: t('notifyDigestMonthly'), value: 'MONTHLY' },
-                      ]}
-                    />
-                  </Field>
-                )}
-              </>
+                </Input>
+              </Field>
             )}
+
+            <HStack className="items-center justify-between">
+              <Text className="text-typography-900 flex-1 mr-3">{t('remindOnDueDate')}</Text>
+              <Switch value={remindOnDueDate} onValueChange={setRemindOnDueDate} />
+            </HStack>
+
+            <HStack className="items-center justify-between">
+              <Text className="text-typography-900 flex-1 mr-3">{t('weeklySummary')}</Text>
+              <Switch value={weeklySummary} onValueChange={setWeeklySummary} />
+            </HStack>
+
+            <Text className="text-typography-500 text-xs">
+              {t('remindersDeliveryNote')}{timezone ? ` (${timezone})` : ''}
+            </Text>
 
             <Button onPress={saveNotifications} isDisabled={notifySaving}>
               {notifySaving && <ButtonSpinner className="mr-2" />}
