@@ -181,8 +181,8 @@ model Category {
     subscriptions Subscription[]
     teamId        String
     team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-    userId        String
-    user          User           @relation(fields: [userId], references: [id])
+    userId        String?
+    user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
     createdAt     DateTime       @default(now())
     updatedAt     DateTime       @updatedAt
 

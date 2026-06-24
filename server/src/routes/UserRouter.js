@@ -49,6 +49,7 @@ function safeUser(user) {
         remindOnDueDate:   user.remindOnDueDate,
         weeklySummary:     user.weeklySummary,
         pushEnabled:       user.pushEnabled,
+        deletionRequestedAt: user.deletionRequestedAt,
     };
 }
 
@@ -98,6 +99,36 @@ UserRouter.patch('/me/password', async (req, res, next) => {
         await prisma.user.update({ where: { id: req.userId }, data: { passwordHash } });
 
         res.json({ message: 'Password changed successfully' });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// --- Account deletion ----------------------------------------------------
+
+// Request account deletion. Soft-delete: flag the account; the scheduler purges
+// it after the grace period (accountService). The client should sign the user
+// out afterwards.
+UserRouter.delete('/me', async (req, res, next) => {
+    try {
+        const user = await prisma.user.update({
+            where: { id: req.userId },
+            data:  { deletionRequestedAt: new Date() },
+        });
+        res.json({ message: 'Account scheduled for deletion', user: safeUser(user) });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Cancel a pending deletion (restore the account).
+UserRouter.post('/me/restore', async (req, res, next) => {
+    try {
+        const user = await prisma.user.update({
+            where: { id: req.userId },
+            data:  { deletionRequestedAt: null },
+        });
+        res.json({ message: 'Account restored', user: safeUser(user) });
     } catch (err) {
         next(err);
     }

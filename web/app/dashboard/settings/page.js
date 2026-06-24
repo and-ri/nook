@@ -11,8 +11,17 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMe, updateMe, updatePassword, getCurrencies } from "@/lib/api";
-import { ArrowLeft, CheckCircle2, Sun, Moon, Monitor } from "lucide-react";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getMe, updateMe, updatePassword, getCurrencies, deleteAccount, restoreAccount } from "@/lib/api";
+import { ArrowLeft, CheckCircle2, Sun, Moon, Monitor, Trash2, AlertTriangle } from "lucide-react";
+
+function signOut() {
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    window.location.href = '/login';
+}
 
 function SuccessAlert({ message }) {
     return (
@@ -67,6 +76,10 @@ export default function SettingsPage() {
     const [notifyLoading, setNotifyLoading] = useState(false);
     const [notifyError, setNotifyError] = useState(null);
     const [notifySuccess, setNotifySuccess] = useState(false);
+
+    // Account deletion
+    const [deleteBusy, setDeleteBusy] = useState(false);
+    const [restoreBusy, setRestoreBusy] = useState(false);
 
     useEffect(() => {
         const currentLocale = document.cookie
@@ -163,6 +176,32 @@ export default function SettingsPage() {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        setDeleteBusy(true);
+        try {
+            await deleteAccount();
+            signOut(); // navigates away; account is restorable for 7 days
+        } catch {
+            setDeleteBusy(false);
+        }
+    };
+
+    const handleRestore = async () => {
+        setRestoreBusy(true);
+        try {
+            const res = await restoreAccount();
+            setUser(res.user);
+        } catch { /* ignore */ } finally {
+            setRestoreBusy(false);
+        }
+    };
+
+    // Locale-formatted purge date (request + 7 days) for the restore banner.
+    const purgeDate = user?.deletionRequestedAt
+        ? new Date(new Date(user.deletionRequestedAt).getTime() + 7 * 86400000)
+            .toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+        : null;
+
     return (
         <div className="container mx-auto py-8 max-w-2xl flex flex-col gap-6">
             <Button variant="ghost" size="sm" asChild className="w-fit -ml-2">
@@ -173,6 +212,17 @@ export default function SettingsPage() {
             </Button>
 
             <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+
+            {user?.deletionRequestedAt && (
+                <Alert variant="destructive" className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <AlertDescription>
+                        {t('deletionScheduled', { date: purgeDate })}
+                    </AlertDescription>
+                    <Button size="sm" variant="outline" onClick={handleRestore} disabled={restoreBusy} className="w-fit shrink-0">
+                        {restoreBusy ? t('restoring') : t('restoreAccount')}
+                    </Button>
+                </Alert>
+            )}
 
             {loading ? (
                 <div className="flex flex-col gap-4">
@@ -446,6 +496,42 @@ export default function SettingsPage() {
                                     {notifyLoading ? t('savingNotifications') : t('saveNotifications')}
                                 </Button>
                             </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Danger zone */}
+                    <Card className="border-destructive/40">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <AlertTriangle className="h-4 w-4" />
+                                {t('dangerZone')}
+                            </CardTitle>
+                            <CardDescription>{t('deleteAccountDesc')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" disabled={deleteBusy || !!user?.deletionRequestedAt}>
+                                        <Trash2 data-icon="inline-start" />
+                                        {deleteBusy ? t('deleting') : t('deleteAccount')}
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>{t('deleteAccountConfirmTitle')}</AlertDialogTitle>
+                                        <AlertDialogDescription>{t('deleteAccountConfirmBody')}</AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleDeleteAccount}
+                                            className="bg-destructive text-white hover:bg-destructive/90"
+                                        >
+                                            {t('deleteAccountAction')}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </CardContent>
                     </Card>
                 </>

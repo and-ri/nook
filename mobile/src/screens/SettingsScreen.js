@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { Platform, ScrollView, Alert as RNAlert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslations } from 'use-intl';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +13,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useLocaleControl } from '../context/LocaleContext';
 import { PUSH_OPT_IN_KEY } from '../components/PushManager';
 import { requestPushToken, getPushTokenIfGranted } from '../lib/push';
-import { getMe, updateMe, updatePassword, getCurrencies, registerPushToken, unregisterPushToken } from '../api';
+import { getMe, updateMe, updatePassword, getCurrencies, registerPushToken, unregisterPushToken, deleteAccount, restoreAccount } from '../api';
 import { SUPPORTED_LOCALES } from '../i18n';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
@@ -91,6 +91,11 @@ export default function SettingsScreen({ navigation }) {
   const [notifySaving, setNotifySaving] = useState(false);
   const [notifyMsg, setNotifyMsg] = useState(null);
 
+  // Account deletion
+  const [deletionRequestedAt, setDeletionRequestedAt] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [restoreBusy, setRestoreBusy] = useState(false);
+
   useEffect(() => {
     Promise.all([getMe(), getCurrencies()])
       .then(([userRes, currRes]) => {
@@ -104,6 +109,7 @@ export default function SettingsScreen({ navigation }) {
         setRemindOnDueDate(u.remindOnDueDate ?? false);
         setWeeklySummary(u.weeklySummary ?? false);
         setTimezone(u.timezone ?? null);
+        setDeletionRequestedAt(u.deletionRequestedAt ?? null);
         setCurrencies(currRes.currencies || []);
       })
       .catch(() => {});
@@ -168,6 +174,41 @@ export default function SettingsScreen({ navigation }) {
       /* ignore */
     } finally {
       setNotifySaving(false);
+    }
+  };
+
+  const confirmDelete = () => {
+    RNAlert.alert(
+      t('deleteAccountConfirmTitle'),
+      t('deleteAccountConfirmBody'),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        {
+          text: t('deleteAccountAction'),
+          style: 'destructive',
+          onPress: async () => {
+            setDeleteBusy(true);
+            try {
+              await deleteAccount();
+              await signOut(); // restorable for 7 days
+            } catch {
+              setDeleteBusy(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const doRestore = async () => {
+    setRestoreBusy(true);
+    try {
+      const res = await restoreAccount();
+      setDeletionRequestedAt(res.user?.deletionRequestedAt ?? null);
+    } catch {
+      /* ignore */
+    } finally {
+      setRestoreBusy(false);
     }
   };
 
@@ -370,6 +411,32 @@ export default function SettingsScreen({ navigation }) {
               {notifySaving && <ButtonSpinner className="mr-2" />}
               <ButtonText>{notifySaving ? t('savingNotifications') : t('saveNotifications')}</ButtonText>
             </Button>
+          </SectionCard>
+
+          {/* Danger zone */}
+          <SectionCard title={t('dangerZone')} description={t('deleteAccountDesc')}>
+            {deletionRequestedAt ? (
+              <>
+                <Alert action="error" variant="outline">
+                  <AlertText>
+                    {t('deletionScheduled', {
+                      date: new Date(new Date(deletionRequestedAt).getTime() + 7 * 86400000)
+                        .toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    })}
+                  </AlertText>
+                </Alert>
+                <Button variant="outline" onPress={doRestore} isDisabled={restoreBusy}>
+                  {restoreBusy && <ButtonSpinner className="mr-2" />}
+                  <ButtonText>{restoreBusy ? t('restoring') : t('restoreAccount')}</ButtonText>
+                </Button>
+              </>
+            ) : (
+              <Button action="negative" onPress={confirmDelete} isDisabled={deleteBusy}>
+                {deleteBusy && <ButtonSpinner className="mr-2" />}
+                <Ionicons name="trash-outline" size={16} color="white" style={{ marginRight: 8 }} />
+                <ButtonText>{deleteBusy ? t('deleting') : t('deleteAccount')}</ButtonText>
+              </Button>
+            )}
           </SectionCard>
 
           <Button action="negative" variant="outline" onPress={signOut}>

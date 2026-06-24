@@ -194,7 +194,18 @@
     "remindBefore": "Remind me before a payment",
     "remindOnDueDate": "Remind me on the due date",
     "weeklySummary": "Weekly summary every Monday",
-    "remindersDeliveryNote": "Reminders arrive in the morning (9–12) in your timezone."
+    "remindersDeliveryNote": "Reminders arrive in the morning (9–12) in your timezone.",
+    "dangerZone": "Danger zone",
+    "deleteAccount": "Delete account",
+    "deleteAccountDesc": "Permanently delete your account and personal data after a 7-day grace period.",
+    "deleteAccountConfirmTitle": "Delete your account?",
+    "deleteAccountConfirmBody": "Your account will be scheduled for deletion and permanently removed after 7 days. Sign back in within 7 days to restore it. Subscriptions in teams you share with others will stay with them.",
+    "deleteAccountAction": "Delete account",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "deletionScheduled": "Your account is scheduled for deletion on {date}.",
+    "restoreAccount": "Restore account",
+    "restoring": "Restoring…"
   },
   "Language": {
     "en": "English",

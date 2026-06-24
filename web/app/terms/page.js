@@ -4,7 +4,7 @@ import { LegalShell } from '@/components/legal/LegalShell';
 // NOTE: This is a tailored template, not legal advice. Fill in the jurisdiction
 // and operator placeholders below and have it reviewed before publishing.
 const UPDATED = '2026-06-24';
-const CONTACT = 'support@subscree.app';
+const CONTACT = 'contact@subscree.app';
 
 const content = {
     en: {

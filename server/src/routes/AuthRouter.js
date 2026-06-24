@@ -41,7 +41,7 @@ const resetPasswordSchema = z.object({
 });
 
 function safeUser(user) {
-    return { id: user.id, email: user.email, name: user.name, preferredCurrency: user.preferredCurrency };
+    return { id: user.id, email: user.email, name: user.name, preferredCurrency: user.preferredCurrency, deletionRequestedAt: user.deletionRequestedAt };
 }
 
 AuthRouter.post('/register', async (req, res, next) => {

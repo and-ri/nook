@@ -247,7 +247,10 @@ async function sendWeeklySummary(user, today) {
 // the send window + per-occurrence dedupe prevent duplicates.
 export async function runDueNotifications(now = new Date()) {
     const users = await prisma.user.findMany({
-        where: { OR: [{ notifyEnabled: true }, { pushEnabled: true }] },
+        where: {
+            deletionRequestedAt: null, // don't notify accounts pending deletion
+            OR: [{ notifyEnabled: true }, { pushEnabled: true }],
+        },
     });
 
     for (const user of users) {
