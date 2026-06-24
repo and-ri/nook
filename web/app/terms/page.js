@@ -71,7 +71,7 @@ const content = {
             },
             {
                 heading: 'Governing law',
-                body: ['These Terms are governed by the laws of [Jurisdiction], without regard to its conflict-of-law rules.'],
+                body: ['These Terms are governed by the laws of Ukraine, without regard to its conflict-of-law rules.'],
             },
             {
                 heading: 'Contact',
@@ -143,7 +143,7 @@ const content = {
             },
             {
                 heading: 'Застосовне право',
-                body: ['Ці Правила регулюються законодавством [Юрисдикція] без урахування його колізійних норм.'],
+                body: ['Ці Правила регулюються законодавством України без урахування його колізійних норм.'],
             },
             {
                 heading: 'Контакти',

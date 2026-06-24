@@ -81,7 +81,7 @@ const content = {
                 heading: 'Contact',
                 body: [
                     `If you have questions about this policy or your data, contact us at ${CONTACT}.`,
-                    'Operator: [Operator legal name], [address / jurisdiction].',
+                    'Operator: Subscree, Kyiv / Ukraine.',
                 ],
             },
         ],
@@ -160,7 +160,7 @@ const content = {
                 heading: 'Контакти',
                 body: [
                     `Якщо у вас є запитання щодо цієї політики або ваших даних, напишіть нам: ${CONTACT}.`,
-                    'Оператор: [Юридична назва оператора], [адреса / юрисдикція].',
+                    'Оператор: Subscree, Київ / Україна.',
                 ],
             },
         ],
