@@ -11,13 +11,17 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://subscree.app/api"
+        "EXPO_PUBLIC_API_URL": "https://subscree.app/api",
+        "EXPO_PUBLIC_UMAMI_URL": "",
+        "EXPO_PUBLIC_UMAMI_WEBSITE_ID": ""
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://subscree.app/api"
+        "EXPO_PUBLIC_API_URL": "https://subscree.app/api",
+        "EXPO_PUBLIC_UMAMI_URL": "",
+        "EXPO_PUBLIC_UMAMI_WEBSITE_ID": ""
       }
     }
   },

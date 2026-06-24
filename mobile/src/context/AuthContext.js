@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login as apiLogin, register as apiRegister } from '../api';
+import { identifyUser, trackEvent } from '../lib/analytics';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,12 @@ export function AuthProvider({ children }) {
       const storedUser = pairs[1][1];
       if (storedToken) {
         setToken(storedToken);
-        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          setUser(parsed);
+          // Re-associate the analytics session with the user on app start.
+          if (parsed?.id) identifyUser(parsed.id, { email: parsed.email, name: parsed.name });
+        }
       }
       setLoading(false);
     });
@@ -29,6 +35,7 @@ export function AuthProvider({ children }) {
     ]);
     setToken(data.token);
     setUser(data.user);
+    if (data.user?.id) identifyUser(data.user.id, { email: data.user.email, name: data.user.name });
   };
 
   const signUp = async (name, email, password) => {
@@ -42,9 +49,11 @@ export function AuthProvider({ children }) {
     ]);
     setToken(data.token);
     setUser(data.user);
+    if (data.user?.id) identifyUser(data.user.id, { email: data.user.email, name: data.user.name });
   };
 
   const signOut = async () => {
+    trackEvent('logout');
     await AsyncStorage.multiRemove(['auth_token', 'auth_user']);
     setToken(null);
     setUser(null);

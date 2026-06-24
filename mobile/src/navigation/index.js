@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { navigationRef } from '../lib/navigationRef';
 import { PushManager } from '../components/PushManager';
+import { trackScreen } from '../lib/analytics';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -122,7 +123,12 @@ export default function RootNavigator() {
   }
 
   return (
-    <NavigationContainer ref={navigationRef} theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationContainer
+      ref={navigationRef}
+      theme={scheme === 'dark' ? DarkTheme : DefaultTheme}
+      onReady={() => trackScreen(navigationRef.getCurrentRoute()?.name)}
+      onStateChange={() => trackScreen(navigationRef.getCurrentRoute()?.name)}
+    >
       {isAuthenticated ? (
         <>
           <TabNavigator />

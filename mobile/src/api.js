@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { resolveErrorMessage } from './lib/errors';
+import { trackEvent, apiEventName, eventDataForBody } from './lib/analytics';
 
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ??
@@ -18,6 +19,11 @@ async function fetchApi(path, { method = 'GET', body } = {}) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(resolveErrorMessage(data, res.status));
+
+  // Emit a semantic analytics event for recognised mutations (mirrors web).
+  const eventName = apiEventName(method, path);
+  if (eventName) trackEvent(eventName, eventDataForBody(eventName, body));
+
   return data;
 }
 
