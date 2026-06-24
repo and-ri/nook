@@ -13,10 +13,10 @@ export function Footer() {
             <Separator />
             <div className="container mx-auto flex items-center justify-between h-14 px-4">
                 <p className="text-sm text-muted-foreground">
-                    © {year} Nook
+                    © {year} Subscree
                 </p>
                 <Link
-                    href="https://github.com/and-ri/nook"
+                    href="https://github.com/and-ri/subscree"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"

@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 //   - SMTP:    set SMTP_HOST (+ SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_SECURE)
 // If neither is configured, emails are logged to the console (dev fallback).
 
-const FROM = process.env.EMAIL_FROM || 'Nook <no-reply@nook.app>';
+const FROM = process.env.EMAIL_FROM || 'Subscree <no-reply@subscree.app>';
 
 let smtpTransport = null;
 function getSmtpTransport() {

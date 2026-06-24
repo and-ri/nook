@@ -119,7 +119,7 @@ function SidebarContent({ onLinkClick }) {
             <div className="px-3 py-4 border-b">
                 <Link href="/dashboard" onClick={onLinkClick} className="flex items-center gap-2">
                     <Logo className="h-6 w-6" />
-                    <span className="font-bold text-sm">Nook</span>
+                    <span className="font-bold text-sm">Subscree</span>
                 </Link>
             </div>
 
@@ -159,7 +159,7 @@ export function Sidebar() {
             <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 border-b bg-background">
                 <Link href="/dashboard" className="flex items-center gap-2 font-bold text-sm">
                     <Logo className="h-6 w-6" />
-                    Nook
+                    Subscree
                 </Link>
                 <button
                     onClick={() => setMobileOpen(true)}

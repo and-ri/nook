@@ -156,7 +156,7 @@ AuthRouter.post('/forgot-password', async (req, res, next) => {
             try {
                 await sendEmail({
                     to:      user.email,
-                    subject: 'Reset your Nook password',
+                    subject: 'Reset your Subscree password',
                     html: `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1f2937">
                         <h2 style="font-size:18px">Reset your password</h2>
                         <p style="font-size:14px;line-height:1.6">We received a request to reset your password. This link expires in 1 hour.</p>

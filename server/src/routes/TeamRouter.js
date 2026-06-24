@@ -217,10 +217,10 @@ TeamRouter.post('/:id/invitations', async (req, res, next) => {
 
             sendEmail({
                 to:      email,
-                subject: `You've been added to ${team?.name ?? 'a team'} on Nook`,
-                html:    `<p>You were added to the team <strong>${team?.name ?? ''}</strong> on Nook.</p>
-                          <p><a href="${appUrl()}/dashboard">Open Nook</a></p>`,
-                text:    `You were added to the team ${team?.name ?? ''} on Nook. ${appUrl()}/dashboard`,
+                subject: `You've been added to ${team?.name ?? 'a team'} on Subscree`,
+                html:    `<p>You were added to the team <strong>${team?.name ?? ''}</strong> on Subscree.</p>
+                          <p><a href="${appUrl()}/dashboard">Open Subscree</a></p>`,
+                text:    `You were added to the team ${team?.name ?? ''} on Subscree. ${appUrl()}/dashboard`,
             }).catch(err => console.error('[teams] add-notice email failed:', err.message));
 
             return res.status(201).json({ added: true, message: 'Member added' });
@@ -242,13 +242,13 @@ TeamRouter.post('/:id/invitations', async (req, res, next) => {
         const link = `${appUrl()}/invite?token=${token}`;
         sendEmail({
             to:      email,
-            subject: `You're invited to join ${team?.name ?? 'a team'} on Nook`,
+            subject: `You're invited to join ${team?.name ?? 'a team'} on Subscree`,
             html:    `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1f2937">
-                        <h2 style="font-size:18px">Join ${team?.name ?? 'a team'} on Nook</h2>
+                        <h2 style="font-size:18px">Join ${team?.name ?? 'a team'} on Subscree</h2>
                         <p style="font-size:14px;line-height:1.6">You've been invited to collaborate on subscriptions. This link expires in 7 days.</p>
                         <p><a href="${link}" style="display:inline-block;background:#6366f1;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-size:14px">Accept invitation</a></p>
                       </div>`,
-            text:    `You're invited to join ${team?.name ?? 'a team'} on Nook (expires in 7 days): ${link}`,
+            text:    `You're invited to join ${team?.name ?? 'a team'} on Subscree (expires in 7 days): ${link}`,
         }).catch(err => console.error('[teams] invite email failed:', err.message));
 
         res.status(201).json({ invited: true, message: 'Invitation sent' });

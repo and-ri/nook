@@ -1,18 +1,15 @@
 {
   "expo": {
-    "name": "Nook",
-    "slug": "nook",
+    "name": "Subscree",
+    "slug": "subscree",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon-light.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "icon": {
-        "light": "./assets/ios/icon-light.png",
-        "dark": "./assets/ios/icon-dark.png"
-      },
-      "bundleIdentifier": "ua.net.and.nook",
+      "icon": "./assets/ios/icon.png",
+      "bundleIdentifier": "app.subscree",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

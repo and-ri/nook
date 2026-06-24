@@ -33,7 +33,7 @@ function emailShell(title, bodyHtml) {
     return `<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:520px;margin:0 auto;color:#1f2937">
         <h2 style="font-size:18px;margin:0 0 16px">${title}</h2>
         ${bodyHtml}
-        <p style="font-size:12px;color:#9ca3af;margin-top:24px">You received this because payment reminders are enabled in Nook. Manage them in Settings.</p>
+        <p style="font-size:12px;color:#9ca3af;margin-top:24px">You received this because payment reminders are enabled in Subscree. Manage them in Settings.</p>
     </div>`;
 }
 

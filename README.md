@@ -1,4 +1,4 @@
-# Nook
+# Subscree
 
 Track and manage all your subscriptions in one place.
 
@@ -38,8 +38,8 @@ Track and manage all your subscriptions in one place.
 1. Clone the repo:
 
    ```bash
-   git clone https://github.com/and-ri/nook.git
-   cd nook
+   git clone https://github.com/and-ri/subscree.git
+   cd subscree
    ```
 
 2. Create a `.env` file in the project root:

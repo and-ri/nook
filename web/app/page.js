@@ -22,7 +22,7 @@ export default function HomePage() {
             {/* Nav */}
             <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b">
                 <div className="container mx-auto flex items-center justify-between h-14 px-4">
-                    <span className="font-semibold tracking-tight">Nook</span>
+                    <span className="font-semibold tracking-tight">Subscree</span>
                     <nav className="flex items-center gap-3">
                         <Link
                             href="/login"
@@ -97,9 +97,9 @@ export default function HomePage() {
             {/* Footer */}
             <footer className="border-t">
                 <div className="container mx-auto flex items-center justify-between h-14 px-4">
-                    <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Nook</p>
+                    <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Subscree</p>
                     <Link
-                        href="https://github.com/and-ri/nook"
+                        href="https://github.com/and-ri/subscree"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-muted-foreground hover:text-foreground transition-colors"
