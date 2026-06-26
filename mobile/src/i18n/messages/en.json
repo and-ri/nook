@@ -126,6 +126,7 @@
     "createButton": "Create Subscription",
     "saveButton": "Save Changes",
     "nameAndAmountRequired": "Name and amount are required.",
+    "amountMustBeNumber": "Please enter a valid amount.",
     "deleteTitle": "Delete subscription?",
     "deleteDesc": "This will permanently delete {name}. This action cannot be undone."
   },

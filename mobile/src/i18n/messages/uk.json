@@ -126,6 +126,7 @@
     "createButton": "Створити підписку",
     "saveButton": "Зберегти зміни",
     "nameAndAmountRequired": "Назва та сума обов'язкові.",
+    "amountMustBeNumber": "Введіть коректну суму.",
     "deleteTitle": "Видалити підписку?",
     "deleteDesc": "Підписку {name} буде видалено назавжди. Цю дію неможливо скасувати."
   },

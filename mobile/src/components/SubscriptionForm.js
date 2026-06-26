@@ -70,9 +70,16 @@ export default function SubscriptionForm({ initial, submitting, error, submitLab
       setLocalError(t('nameAndAmountRequired'));
       return;
     }
+    // Accept the locale decimal comma (e.g. "144,55"): JS Number() only parses
+    // a dot, so normalize before converting and strip any grouping spaces.
+    const amount = Number(String(form.amount).replace(/\s/g, '').replace(',', '.'));
+    if (!Number.isFinite(amount)) {
+      setLocalError(t('amountMustBeNumber'));
+      return;
+    }
     onSubmit({
       name: form.name,
-      amount: Number(form.amount),
+      amount,
       currency: form.currency,
       billingCycle: form.billingCycle,
       status: form.status,
