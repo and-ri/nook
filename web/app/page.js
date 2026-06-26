@@ -385,7 +385,7 @@ export default function HomePage() {
                         <Link href="/terms" className="transition-colors hover:text-foreground">{t('terms')}</Link>
                         <Link href="/login" className="transition-colors hover:text-foreground">{tAuth('login')}</Link>
                         <Link
-                            href="https://github.com/and-ri/subscree"
+                            href="https://github.com/subscree/subscree"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="transition-colors hover:text-foreground"

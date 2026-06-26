@@ -16,7 +16,7 @@ export function Footer() {
                     © {year} Subscree
                 </p>
                 <Link
-                    href="https://github.com/and-ri/subscree"
+                    href="https://github.com/subscree/subscree"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"

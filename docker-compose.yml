@@ -14,7 +14,7 @@ services:
       retries: 5
 
   server:
-    image: ghcr.io/and-ri/subscree-server:latest
+    image: ghcr.io/subscree/subscree-server:latest
     # Not published to the host — reached internally by web as http://server:3001.
     # Add `ports: ["3002:3001"]` if you need to hit the API directly for debugging.
     expose:
@@ -39,7 +39,7 @@ services:
         condition: service_healthy
 
   web:
-    image: ghcr.io/and-ri/subscree-web:latest
+    image: ghcr.io/subscree/subscree-web:latest
     ports:
       - "3001:3001"
     environment:
