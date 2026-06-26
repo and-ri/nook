@@ -43,7 +43,12 @@ export async function fetchApi(path, options = {}) {
     // the session to the user the moment they log in.
     const eventName = apiEventName(method, path);
     if (eventName) {
-        trackEvent(eventName, eventDataForBody(eventName, options.body));
+        // login/signup carry the GA4-recommended `method` param; the rest get
+        // their changed field names (where safe) for richer event reports.
+        const eventData = (eventName === 'login' || eventName === 'signup')
+            ? { method: 'password' }
+            : eventDataForBody(eventName, options.body);
+        trackEvent(eventName, eventData);
     }
     if (eventName === 'login' && data?.user) {
         identifyUser(data.user.id, { email: data.user.email, name: data.user.name });

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { Analytics } from "@/components/providers/Analytics";
 import { ErrorTranslatorBridge } from "@/components/ErrorTranslatorBridge";
 import "./globals.css";
 
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }) {
                 <ThemeProvider>
                     <NextIntlClientProvider locale={locale} messages={messages}>
                         <ErrorTranslatorBridge />
+                        {gaMeasurementId && <Analytics />}
                         {children}
                     </NextIntlClientProvider>
                 </ThemeProvider>
@@ -87,7 +89,9 @@ export default async function RootLayout({ children }) {
                             {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${gaMeasurementId}');`}
+// send_page_view:false — page_view is sent manually on every route change by
+// the Analytics provider so SPA navigations are tracked (and not double-counted).
+gtag('config', '${gaMeasurementId}', { send_page_view: false });`}
                         </Script>
                     </>
                 )}

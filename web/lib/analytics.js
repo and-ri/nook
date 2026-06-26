@@ -45,6 +45,36 @@ export function identifyUser(id, properties = {}) {
     }
 }
 
+// Record a GA4 page_view. We drive this manually on every client-side route
+// change because gtag's automatic pageview only fires on full page loads (see
+// the Analytics provider). Umami's own script auto-tracks pageviews, so this is
+// GA-only. Requires `send_page_view: false` in the gtag config to avoid a
+// double count on the initial load.
+export function trackPageView() {
+    if (typeof window === 'undefined') return;
+    const g = gtag();
+    if (!g) return;
+    try {
+        g('event', 'page_view', {
+            page_location: window.location.href,
+            page_title: document.title,
+        });
+    } catch { /* ignore */ }
+}
+
+// Set GA4 user properties for segmentation and comparisons (non-PII only).
+// Properties must be registered as custom dimensions in the GA4 UI to surface
+// in reports. No-op for Umami (custom properties ride on identify there).
+export function setUserProperties(properties) {
+    const g = gtag();
+    if (!g || !properties) return;
+    const clean = Object.fromEntries(
+        Object.entries(properties).filter(([, v]) => v != null && v !== '')
+    );
+    if (!Object.keys(clean).length) return;
+    try { g('set', 'user_properties', clean); } catch { /* ignore */ }
+}
+
 // Resource path segments we recognise. Anything else (uuids, ids) is collapsed
 // to ":id" so a request path maps to a stable, semantic event name.
 const VOCAB = new Set([

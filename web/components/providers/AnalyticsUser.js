@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { getMe, updateMe } from '@/lib/api';
-import { identifyUser } from '@/lib/analytics';
+import { identifyUser, setUserProperties } from '@/lib/analytics';
 
 // Re-associates the Umami session with the logged-in user on every
 // authenticated page load (identity from login alone doesn't survive new
@@ -15,6 +15,9 @@ export function AnalyticsUser() {
             .then(({ user }) => {
                 if (!user) return;
                 identifyUser(user.id, { email: user.email, name: user.name });
+                // Non-PII property for GA4 segmentation (register as a custom
+                // dimension in GA4 to use it in reports).
+                setUserProperties({ preferred_currency: user.preferredCurrency });
                 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 if (tz && tz !== user.timezone) {
                     updateMe({ timezone: tz }).catch(() => { /* transient — retry next load */ });
