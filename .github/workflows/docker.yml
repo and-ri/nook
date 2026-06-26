@@ -2,14 +2,36 @@ name: Docker
 
 on:
   push:
-    branches: [main]
+    branches: [main]        # → edge + sha tags (rolling, for staging/dogfooding)
+    tags: ['v*.*.*']        # → 1.2.3 / 1.2 / latest (stable, pinnable releases)
+
+# Cancel superseded runs on the same ref; release tags each have a unique ref
+# so they never cancel one another.
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-server:
+  # Gate every publish on the test suite — no image leaves CI from red code.
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: server
+            context: ./server
+            image: subscree-server
+          - name: web
+            context: ./web
+            image: subscree-web
 
     steps:
       - uses: actions/checkout@v4
@@ -25,50 +47,22 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository_owner }}/subscree-server
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          # latest=auto (default) attaches `latest` only to semver tags, so it
+          # tracks the newest stable release rather than the newest commit.
           tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=edge,branch=main
             type=sha,prefix=sha-,format=short
-            type=raw,value=latest
 
       - uses: docker/build-push-action@v6
         with:
-          context: ./server
+          context: ${{ matrix.context }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  build-web:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/subscree-web
-          tags: |
-            type=sha,prefix=sha-,format=short
-            type=raw,value=latest
-
-      - uses: docker/build-push-action@v6
-        with:
-          context: ./web
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # Per-image cache scope so the server and web builds don't evict each
+          # other's layers (the default shared scope would thrash).
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
