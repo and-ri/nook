@@ -47,6 +47,8 @@ services:
       # Umami analytics (optional) — set both to enable tracking
       UMAMI_SCRIPT_URL: ${UMAMI_SCRIPT_URL:-}
       UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+      # Google Analytics 4 (optional) — set to enable GA4 alongside Umami
+      GA_MEASUREMENT_ID: ${GA_MEASUREMENT_ID:-}
     depends_on:
       - server
 

@@ -55,6 +55,7 @@ export default async function RootLayout({ children }) {
     // proxy for the same runtime-config approach.
     const umamiSrc       = process.env.UMAMI_SCRIPT_URL;
     const umamiWebsiteId = process.env.UMAMI_WEBSITE_ID;
+    const gaMeasurementId = process.env.GA_MEASUREMENT_ID;
 
     return (
         <html
@@ -75,6 +76,20 @@ export default async function RootLayout({ children }) {
                         data-website-id={umamiWebsiteId}
                         strategy="afterInteractive"
                     />
+                )}
+                {gaMeasurementId && (
+                    <>
+                        <Script
+                            src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+                            strategy="afterInteractive"
+                        />
+                        <Script id="ga-init" strategy="afterInteractive">
+                            {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}');`}
+                        </Script>
+                    </>
                 )}
             </body>
         </html>

@@ -1,32 +1,48 @@
 'use client';
 
-// Thin wrapper around the Umami tracker (window.umami), injected by the
-// <Script> tag in app/layout.js when UMAMI_SCRIPT_URL / UMAMI_WEBSITE_ID are
-// configured. Every helper is a no-op when the script is absent (analytics
-// disabled, SSR, or not yet loaded) and never throws — analytics must never
-// break the app.
+// Thin wrapper that fans every event out to both analytics providers injected
+// by the <Script> tags in app/layout.js:
+//   - Umami (window.umami)  — UMAMI_SCRIPT_URL / UMAMI_WEBSITE_ID
+//   - Google Analytics 4 (window.gtag) — GA_MEASUREMENT_ID
+// Each provider is independent: a helper is a no-op for whichever script is
+// absent (analytics disabled, SSR, or not yet loaded) and never throws —
+// analytics must never break the app.
 
 function umami() {
     return typeof window !== 'undefined' ? window.umami : null;
 }
 
+function gtag() {
+    return typeof window !== 'undefined' && typeof window.gtag === 'function' ? window.gtag : null;
+}
+
 // Fire a custom event. `data` is an optional flat object of properties.
 export function trackEvent(name, data) {
+    if (!name) return;
     const u = umami();
-    if (!u || !name) return;
-    try {
-        data ? u.track(name, data) : u.track(name);
-    } catch { /* ignore */ }
+    if (u) {
+        try { data ? u.track(name, data) : u.track(name); } catch { /* ignore */ }
+    }
+    const g = gtag();
+    if (g) {
+        try { g('event', name, data || {}); } catch { /* ignore */ }
+    }
 }
 
 // Associate the current session with a known user. Sent on login and on every
 // authenticated page load (see AnalyticsUser).
 export function identifyUser(id, properties = {}) {
+    if (!id) return;
     const u = umami();
-    if (!u || !id) return;
-    try {
-        u.identify(String(id), properties);
-    } catch { /* ignore */ }
+    if (u) {
+        try { u.identify(String(id), properties); } catch { /* ignore */ }
+    }
+    const g = gtag();
+    if (g) {
+        // GA4 forbids sending PII (email, name) to Google, so only the
+        // pseudonymous user_id is forwarded — never `properties`.
+        try { g('set', { user_id: String(id) }); } catch { /* ignore */ }
+    }
 }
 
 // Resource path segments we recognise. Anything else (uuids, ids) is collapsed
